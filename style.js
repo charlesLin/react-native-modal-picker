@@ -10,7 +10,7 @@ const FONT_SIZE = 16;
 const HIGHLIGHT_COLOR = 'rgba(0,118,255,0.9)';
 const OPTION_CONTAINER_HEIGHT = 400;
 
-export default StyleSheet.create({
+export default ({
 
     overlayStyle: {
         width: width,
