@@ -1,6 +1,6 @@
 'use strict';
 
-import React,{
+import React, {
     PropTypes
 } from 'react';
 
@@ -17,6 +17,7 @@ import {
 
 import styles from './style';
 import BaseComponent from './BaseComponent';
+const OPTION_CONTAINER_HEIGHT = 400;
 
 let componentIndex = 0;
 
@@ -33,12 +34,13 @@ const propTypes = {
     cancelStyle: View.propTypes.style,
     cancelTextStyle: Text.propTypes.style,
     overlayStyle: View.propTypes.style,
-    cancelText: PropTypes.string
+    cancelText: PropTypes.string,
+    labelField: PropTypes.string
 };
 
 const defaultProps = {
     data: [],
-    onChange: ()=> {},
+    onChange: () => { },
     initValue: 'Select me!',
     style: {},
     selectStyle: {},
@@ -49,7 +51,8 @@ const defaultProps = {
     cancelStyle: {},
     cancelTextStyle: {},
     overlayStyle: {},
-    cancelText: 'cancel'
+    cancelText: 'cancel',
+    labelField: 'label'
 };
 
 export default class ModalPicker extends BaseComponent {
@@ -74,47 +77,48 @@ export default class ModalPicker extends BaseComponent {
     }
 
     componentDidMount() {
-        this.setState({selected: this.props.initValue});
-        this.setState({cancelText: this.props.cancelText});
+        this.setState({ selected: this.props.initValue });
+        this.setState({ cancelText: this.props.cancelText });
     }
 
     componentWillReceiveProps(nextProps) {
-      if (nextProps.initValue != this.props.initValue) {
-        this.setState({selected: nextProps.initValue});
-      }
+        if (nextProps.initValue != this.props.initValue) {
+            this.setState({ selected: nextProps.initValue });
+        }
     }
 
     onChange(item) {
         this.props.onChange(item);
-        this.setState({selected: item.label});
+        this.setState({ selected: item[labelField] });
         this.close();
     }
 
     close() {
-      this.setState({
-        modalVisible: false
-      });
+        this.setState({
+            modalVisible: false
+        });
     }
 
     open() {
-      this.setState({
-        modalVisible: true
-      });
+        this.setState({
+            modalVisible: true
+        });
     }
 
     renderSection(section) {
         return (
-            <View key={section.key} style={[styles.sectionStyle,this.props.sectionStyle]}>
-                <Text style={[styles.sectionTextStyle,this.props.sectionTextStyle]}>{section.label}</Text>
+            <View key={section.key} style={[styles.sectionStyle, this.props.sectionStyle]}>
+                <Text style={[styles.sectionTextStyle, this.props.sectionTextStyle]}>{section.label}</Text>
             </View>
         );
     }
 
     renderOption(option) {
+        let labelField = this.props.labelField;
         return (
-            <TouchableOpacity key={option.key} onPress={()=>this.onChange(option)}>
+            <TouchableOpacity key={option.key} onPress={() => this.onChange(option) }>
                 <View style={[styles.optionStyle, this.props.optionStyle]}>
-                    <Text style={[styles.optionTextStyle,this.props.optionTextStyle]}>{option.label}</Text>
+                    <Text style={[styles.optionTextStyle, this.props.optionTextStyle]}>{option[labelField]}</Text>
                 </View>
             </TouchableOpacity>)
     }
@@ -128,29 +132,34 @@ export default class ModalPicker extends BaseComponent {
             }
         });
 
+        const {height, width} = Dimensions.get('window');
+        const cancelView = (
+            <View style={styles.cancelContainer}>
+                <TouchableOpacity onPress={this.close}>
+                    <View style={[styles.cancelStyle, this.props.cancelStyle]}>
+                        <Text style={[styles.cancelTextStyle, this.props.cancelTextStyle]}>{this.props.cancelText}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+
         return (
-            <View style={[styles.overlayStyle, this.props.overlayStyle]} key={'modalPicker'+(componentIndex++)}>
-                <View style={styles.optionContainer}>
+            <View style={[styles.overlayStyle, this.props.overlayStyle, { width, height }]} key={'modalPicker' + (componentIndex++) }>
+                <View style={[styles.optionContainer, { top: (height - OPTION_CONTAINER_HEIGHT) / 2 + 10, width: width * 0.8 }]}>
                     <ScrollView keyboardShouldPersistTaps>
-                        <View style={{paddingHorizontal:10}}>
+                        <View style={{ paddingHorizontal: 10 }}>
                             {options}
                         </View>
                     </ScrollView>
                 </View>
-                <View style={styles.cancelContainer}>
-                    <TouchableOpacity onPress={this.close}>
-                        <View style={[styles.cancelStyle, this.props.cancelStyle]}>
-                            <Text style={[styles.cancelTextStyle,this.props.cancelTextStyle]}>{this.props.cancelText}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                {cancelView}
 
             </View>);
     }
 
     renderChildren() {
 
-        if(this.props.children) {
+        if (this.props.children) {
             return this.props.children;
         }
         return (
@@ -163,16 +172,16 @@ export default class ModalPicker extends BaseComponent {
     render() {
 
         const dp = (
-          <Modal transparent={true} ref="modal" visible={this.state.modalVisible} onRequestClose={this.close} animationType={this.state.animationType}>
-          {this.renderOptionList()}
-          </Modal>
+            <Modal transparent={true} ref="modal" visible={this.state.modalVisible} onRequestClose={this.close} animationType={this.state.animationType}>
+                {this.renderOptionList() }
+            </Modal>
         );
 
         return (
             <View style={this.props.style}>
                 {dp}
                 <TouchableOpacity onPress={this.open}>
-                    {this.renderChildren()}
+                    {this.renderChildren() }
                 </TouchableOpacity>
             </View>
         );
