@@ -35,7 +35,8 @@ const propTypes = {
     cancelTextStyle: Text.propTypes.style,
     overlayStyle: View.propTypes.style,
     cancelText: PropTypes.string,
-    labelField: PropTypes.string
+    labelField: PropTypes.string,
+    keyField: PropTypes.string
 };
 
 const defaultProps = {
@@ -52,7 +53,8 @@ const defaultProps = {
     cancelTextStyle: {},
     overlayStyle: {},
     cancelText: 'cancel',
-    labelField: 'label'
+    labelField: 'label',
+    keyField: 'key'
 };
 
 export default class ModalPicker extends BaseComponent {
@@ -88,6 +90,7 @@ export default class ModalPicker extends BaseComponent {
     }
 
     onChange(item) {
+        let labelField = this.props.labelField;
         this.props.onChange(item);
         this.setState({ selected: item[labelField] });
         this.close();
@@ -106,8 +109,9 @@ export default class ModalPicker extends BaseComponent {
     }
 
     renderSection(section) {
+        const { keyField} = this.props.keyField;
         return (
-            <View key={section.key} style={[styles.sectionStyle, this.props.sectionStyle]}>
+            <View key={section[keyField]} style={[styles.sectionStyle, this.props.sectionStyle]}>
                 <Text style={[styles.sectionTextStyle, this.props.sectionTextStyle]}>{section.label}</Text>
             </View>
         );
@@ -115,8 +119,9 @@ export default class ModalPicker extends BaseComponent {
 
     renderOption(option) {
         let labelField = this.props.labelField;
+        const { keyField} = this.props.keyField;
         return (
-            <TouchableOpacity key={option.key} onPress={() => this.onChange(option) }>
+            <TouchableOpacity key={option[keyField]} onPress={() => this.onChange(option) }>
                 <View style={[styles.optionStyle, this.props.optionStyle]}>
                     <Text style={[styles.optionTextStyle, this.props.optionTextStyle]}>{option[labelField]}</Text>
                 </View>
