@@ -119,7 +119,7 @@ export default class ModalPicker extends BaseComponent {
 
     renderOption(option) {
         let labelField = this.props.labelField;
-        const { keyField} = this.props.keyField;
+        const { keyField} = this.props;
         return (
             <TouchableOpacity key={option[keyField]} onPress={() => this.onChange(option) }>
                 <View style={[styles.optionStyle, this.props.optionStyle]}>
