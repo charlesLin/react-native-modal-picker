@@ -33,7 +33,7 @@ export default ({
     },
 
     selectStyle: {
-        flex: 1,
+        flexGrow: 1,
         borderColor: '#ccc',
         borderWidth: 1,
         padding: 8,
